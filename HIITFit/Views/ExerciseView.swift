@@ -33,41 +33,46 @@
 import SwiftUI
 import AVKit
 
-let videoNames = ["squat", "step-up", "burpee", "sun-salute"]
-
-let exerciseNames = ["Squat", "Step Up", "Burpee", "Sun Salute"]
-
 let interval: TimeInterval = 30
 
+
 struct ExerciseView: View {
+    @Binding var selectedTab: Int
     let index: Int
+    var lastExercise: Bool {
+        index + 1 == Exercise.exercises.count
+    }
     var body: some View {
         GeometryReader { geometry in
             VStack {
                 // Title and page number
-                HeaderView(exerciseName: exerciseNames[index])
+                HeaderView(titleText: Exercise.exercises[index].exerciseName)
                     .padding(.bottom)
                 // Video Player
-                if let url = Bundle.main.url(forResource: videoNames[index], withExtension: "mp4") {
+                if let url = Bundle.main.url(forResource: Exercise.exercises[index].videoName, withExtension: "mp4") {
                     VideoPlayer(player: AVPlayer(url: url))
                         .frame(height: geometry.size.height * 0.45)
                 } else {
-                    Text("Couldn't find \(videoNames[index]).mp4")
+                    Text("Couldn't find \(Exercise.exercises[index].videoName).mp4")
                         .foregroundColor(.red)
                 }
                 // Timer
                 Text(Date().addingTimeInterval(interval), style: .timer)
                     .font(.system(size: 90))
                 // Start/Done button
-                Button("Start/Done") { }
-                    .font(.title3)
-                    .padding()
+                HStack {
+                    Button(NSLocalizedString("Start Exercise", comment: "begin exercise / mark as finished")) { }
+                    Button("Done") {}
+                }
+                .font(.title3)
+                .padding()
+
                 // Rating
                 RatingView()
                     .padding()
                 // History button
                 Spacer()
-                Button("History") { }
+                Button(NSLocalizedString("History", comment: "view user acitivty")) { }
                     .padding(.bottom)
             }
         }
@@ -76,7 +81,7 @@ struct ExerciseView: View {
 
 struct ExerciseView_Previews: PreviewProvider {
     static var previews: some View {
-        ExerciseView(index: 0)
+        ExerciseView(selectedTab: .constant(1), index: 1)
     }
 }
 

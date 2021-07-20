@@ -32,9 +32,34 @@
 
 import SwiftUI
 
+let highFiveMessage = """
+    Good job completeing all four exercises!
+    Remember tomorrow's another day.
+    So eat well and get some rest.
+    """
+
 struct SuccessView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ZStack {
+            VStack {
+                Image(systemName: "hand.raised.fill")
+                    .resizedToFill(width: 75, height: 75)
+                    .foregroundColor(.purple)
+                    .padding()
+                Text("High Five!")
+                    .font(.title)
+                    .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                Text(highFiveMessage)
+                    .font(.headline)
+                    .foregroundColor(Color.gray)
+                    .multilineTextAlignment(.center)
+            }
+            VStack {
+                Spacer()
+                Button("Continue", action: {})
+                    .padding()
+            }
+        }
     }
 }
 
