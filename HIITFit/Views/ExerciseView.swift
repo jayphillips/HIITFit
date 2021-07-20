@@ -37,7 +37,10 @@ let interval: TimeInterval = 30
 
 
 struct ExerciseView: View {
+    @State private var showHistory = false
     @Binding var selectedTab: Int
+    @State private var rating = 0
+    @State private var showSuccess = false
     let index: Int
     var lastExercise: Bool {
         index + 1 == Exercise.exercises.count
@@ -46,7 +49,7 @@ struct ExerciseView: View {
         GeometryReader { geometry in
             VStack {
                 // Title and page number
-                HeaderView(titleText: Exercise.exercises[index].exerciseName)
+                HeaderView(selectedTab: $selectedTab, titleText: Exercise.exercises[index].exerciseName)
                     .padding(.bottom)
                 // Video Player
                 if let url = Bundle.main.url(forResource: Exercise.exercises[index].videoName, withExtension: "mp4") {
@@ -62,17 +65,29 @@ struct ExerciseView: View {
                 // Start/Done button
                 HStack {
                     Button(NSLocalizedString("Start Exercise", comment: "begin exercise / mark as finished")) { }
-                    Button("Done") {}
+                    Button("Done") {
+                        if lastExercise {
+                            showSuccess.toggle()
+                        } else {
+                            selectedTab += 1
+                        }
+                    }
+                    .sheet(isPresented: $showSuccess) {
+                        SuccessView(selectedTab: $selectedTab)
+                    }
                 }
                 .font(.title3)
                 .padding()
 
                 // Rating
-                RatingView()
+                RatingView(rating: $rating)
                     .padding()
                 // History button
                 Spacer()
-                Button(NSLocalizedString("History", comment: "view user acitivty")) { }
+                Button(NSLocalizedString("History", comment: "view user acitivty")) { showHistory.toggle() }
+                    .sheet(isPresented: $showHistory) {
+                        HistoryView(showHistory: $showHistory)
+                    }
                     .padding(.bottom)
             }
         }
@@ -81,7 +96,7 @@ struct ExerciseView: View {
 
 struct ExerciseView_Previews: PreviewProvider {
     static var previews: some View {
-        ExerciseView(selectedTab: .constant(1), index: 1)
+        ExerciseView(selectedTab: .constant(1), index: 3)
     }
 }
 
